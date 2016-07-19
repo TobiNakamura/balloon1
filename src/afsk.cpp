@@ -27,10 +27,9 @@
  * Documentation on interrupts:
  * http://www.nongnu.org/avr-libc/user-manual/group__avr__interrupts.html
  */
-
+#define DEBUG_AFSK
 #include "config.h"
 #include "afsk_avr.h"
-#include "afsk_arm.h"
 #include "pin.h"
 #include "Radio_UV5R.h"
 #if (ARDUINO + 1) >= 100

@@ -36,9 +36,7 @@
 // Trackuino custom libs
 #include "config.h"
 #include "afsk_avr.h"
-#include "afsk_arm.h"
 #include "aprs.h"
-#include "gps.h"
 #include "pin.h"
 
 // Arduino/AVR libs
@@ -60,13 +58,14 @@ void setup()
   pinMode(LED_PIN, OUTPUT);
   pin_write(LED_PIN, LOW);
 
-  Serial.begin(GPS_BAUDRATE);
+  //Serial.begin(GPS_BAUDRATE);
 #ifdef DEBUG_RESET
   Serial.println("RESET");
 #endif
 
   afsk_setup();
 
+/*
 #ifdef DEBUG_SENS
   Serial.print("Ti=");
   Serial.print(sensors_int_lm60());
@@ -75,16 +74,19 @@ void setup()
   Serial.print(", Vin=");
   Serial.println(sensors_vin());
 #endif
+*/
 
   // Do not start until we get a valid time reference
   // for slotted transmissions.
   if (APRS_SLOT >= 0) {
+    /*
     do {
       while (! Serial.available())
        int a = 4;
     } while (! gps_decode(Serial.read()));
       next_aprs = millis() + 1000 *
       (APRS_PERIOD - (gps_seconds + APRS_PERIOD - APRS_SLOT) % APRS_PERIOD);
+      */
   }
   else {
     next_aprs = millis();
@@ -92,7 +94,7 @@ void setup()
   // TODO: beep while we get a fix, maybe indicating the number of
   // visible satellites by a series of short beeps?
 }
-
+/*
 void get_pos()
 {
   // Get a valid position from the GPS
@@ -105,12 +107,12 @@ void get_pos()
 
 
 }
-
+*/
 void loop()
 {
   // Time for another APRS frame
   if ((int32_t) (millis() - next_aprs) >= 0) {
-    get_pos();
+    //get_pos();
     aprs_send();
     next_aprs += APRS_PERIOD * 1000L;
     while (afsk_flush()) {

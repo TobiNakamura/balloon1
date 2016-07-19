@@ -18,7 +18,6 @@
 #include "ax25.h"
 #include "config.h"
 #include "afsk_avr.h"
-#include "afsk_arm.h"
 #include <stdint.h>
 #if (ARDUINO + 1) >= 100
 #  include <Arduino.h>
@@ -37,7 +36,7 @@ static unsigned int packet_size;
 
 // Module functions
 static void
-update_crc(uint8_t a_bit) 
+update_crc(uint8_t a_bit)
 {
   crc ^= a_bit;
   if (crc & 1)
@@ -113,12 +112,12 @@ ax25_send_header(const struct s_address *addresses, int num_addresses)
   packet_size = 0;
   ones_in_a_row = 0;
   crc = 0xffff;
-  
+
   // Send flags during TX_DELAY milliseconds (8 bit-flag = 8000/1200 ms)
   for (i = 0; i < TX_DELAY * 3 / 20; i++) {
     ax25_send_flag();
   }
-  
+
   for (i = 0; i < num_addresses; i++) {
     // Transmit callsign
     for (j = 0; addresses[i].callsign[j]; j++)
@@ -132,10 +131,10 @@ ax25_send_header(const struct s_address *addresses, int num_addresses)
     else
       send_byte(('0' + addresses[i].ssid) << 1);
   }
-  
+
   // Control field: 3 = APRS-UI frame
   send_byte(0x03);
-  
+
   // Protocol ID: 0xf0 = no layer 3 data
   send_byte(0xf0);
 
@@ -169,17 +168,17 @@ ax25_send_header(const struct s_address *addresses, int num_addresses)
 #endif
 }
 
-void 
+void
 ax25_send_footer()
 {
   // Save the crc so that it can be treated it atomically
   uint16_t final_crc = crc;
-  
+
   // Send the CRC
   send_byte(~(final_crc & 0xff));
   final_crc >>= 8;
   send_byte(~(final_crc & 0xff));
-  
+
   // Signal the end of frame
   ax25_send_flag();
 #ifdef DEBUG_AX25
@@ -194,5 +193,3 @@ ax25_flush_frame()
   afsk_send(packet, packet_size);
   afsk_start();
 }
-
-
