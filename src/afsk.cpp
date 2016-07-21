@@ -27,11 +27,11 @@
  * Documentation on interrupts:
  * http://www.nongnu.org/avr-libc/user-manual/group__avr__interrupts.html
  */
-#define DEBUG_AFSK
+
 #include "config.h"
 #include "afsk_avr.h"
 #include "pin.h"
-#include "Radio_UV5R.h"
+#include "radio_RSUV3.h"
 #if (ARDUINO + 1) >= 100
 #  include <Arduino.h>
 #else
@@ -44,7 +44,7 @@
 // The actual baudrate after rounding errors will be:
 // PLAYBACK_RATE / (integer_part_of((PLAYBACK_RATE * 256) / BAUD_RATE) / 256)
 static const uint16_t BAUD_RATE       = 1200;
-static const uint16_t SAMPLES_PER_BAUD = ((uint32_t)PLAYBACK_RATE << 8) / BAUD_RATE;  // Fixed point 8.ATE
+static const uint16_t SAMPLES_PER_BAUD = ((uint32_t)PLAYBACK_RATE << 8) / BAUD_RATE;  // Fixed point 8.8
 static const uint16_t PHASE_DELTA_1200 = (((TABLE_SIZE * 1200UL) << 7) / PLAYBACK_RATE); // Fixed point 9.7
 static const uint16_t PHASE_DELTA_2200 = (((TABLE_SIZE * 2200UL) << 7) / PLAYBACK_RATE);
 static const uint8_t SAMPLE_FIFO_SIZE = 32;
@@ -63,7 +63,7 @@ volatile static uint8_t sample_fifo_tail = 0;
 volatile static uint32_t sample_overruns = 0;
 
 // The radio (class defined in config.h)
-static RadioUV5R radio;
+static RadioRSUV3 radio;
 
 volatile static unsigned int afsk_packet_size = 0;
 volatile static const uint8_t *afsk_packet;
